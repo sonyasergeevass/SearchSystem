@@ -1,26 +1,66 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Поиск объявлений</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Система поиска объявлений</title>
+  <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h1>Поиск объявлений</h1>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Искать</button>
+<body class="bg-gray-100 font-sans">
+  <header class="flex justify-between items-center p-6 bg-white shadow">
+    <h1 class="text-2xl font-bold text-gray-800">Система поиска объявлений</h1>
+    <button class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">Войти</button>
+  </header>
+
+  <main class="max-w-5xl mx-auto mt-8 px-4">
+    <form method="post" action="" class="grid grid-cols-1 md:grid-cols-4 gap-4 items-end">
+      {% csrf_token %}
+      <div class="md:col-span-2">
+        <label class="block mb-1 text-sm text-gray-700">Поисковый запрос</label>
+          {{ form.query }}
+      </div>
+      <div>
+        <label class="block mb-1 text-sm text-gray-700">Город</label>
+        <select class="w-full p-2 border border-gray-300 rounded">
+          <option>Москва</option>
+          <option>Санкт-Петербург</option>
+          <option>Новосибирск</option>
+          <option>Екатеринбург</option>
+          <option>Казань</option>
+        </select>
+      </div>
+      <div>
+        <button type="submit"
+                class="w-full p-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
+          Найти
+        </button>
+      </div>
     </form>
 
-    {% if results %}
-        <h2>Результаты:</h2>
-        <h3>Avito:</h3>
-        <pre>{{ results.avito|safe }}</pre>
-        <h3>Youla:</h3>
-        <pre>{{ results.youla|safe }}</pre>
-        <h3>24au:</h3>
-        <pre>{{ results.24au|safe }}</pre>
-    {% endif %}
+    <section class="mt-8">
+      <div class="grid gap-4">
+        {% if results %}
+          {% for source, items in results.items %}
+            {% for item in items %}
+                <div class="flex bg-white rounded shadow overflow-hidden">
+                  <div class="w-40 h-40 bg-gray-200 flex-shrink-0 flex items-center justify-center text-sm text-gray-500">
+                    Картинка...
+                  </div>
+                  <div class="p-4">
+                    <h2 class="text-lg font-semibold">{{ item.title }}</h2>
+        <!--            <p class="text-sm text-gray-700">Краткое описание товара, которое показывает его особенности.</p>-->
+                    <p class="mt-2 text-blue-600 font-semibold">{{ item.price }}</p>
+                    <a href="{{ item.link }}" class="text-sm text-blue-500 hover:underline mt-1 block">Перейти к объявлению</a>
+                  </div>
+                </div>
+            {% endfor %}
+          {% endfor %}
+      {% else %}
+          <p class="text-gray-600">Пока что нет результатов. Введите запрос и нажмите "Найти".</p>
+      {% endif %}
+
+      </div>
+    </section>
+  </main>
 </body>
 </html>
