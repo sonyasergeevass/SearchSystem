@@ -1,7 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from selenium.webdriver.common.by import By
 
-from parser.models import Selector
+# from parser.models import Selector
 
 class BaseParser:
     def __init__(self, driver, platform):
@@ -9,9 +9,13 @@ class BaseParser:
         self.platform = platform
         self.selectors = self.load_selectors()
 
+    def get_selector(self):
+        from parser.models import Selector
+        return Selector.objects.filter(platform=self.platform)
+
     def load_selectors(self):
         try:
-            selector = Selector.objects.get(platform=self.platform)
+            selector = self.get_selector().first()
             return {
                 'search_box': selector.search_box,
                 'next_button': selector.next_button,
