@@ -11,7 +11,7 @@ class YoulaParser(BaseParser):
         super().__init__(driver, platform='youla')
 
     def get_search_url(self):
-        return "https://www.youla.ru/"
+        return "https://kupiprodai.ru"
 
     def fake_mouse_activity(self):
         actions = ActionChains(self.driver)
@@ -23,7 +23,7 @@ class YoulaParser(BaseParser):
 
 
 
-    def scroll_page(self, pause_time=5, max_scrolls=3):
+    def scroll_page(self, pause_time=3, max_scrolls=5):
         """Эмулирует прокрутку страницы вниз"""
         last_height = self.driver.execute_script("return document.body.scrollHeight")
 
@@ -43,21 +43,11 @@ class YoulaParser(BaseParser):
     def parse_page(self):
         results = []
         self.scroll_page()
-        # Подождем, пока элементы с параметрами будут загружены
-        time.sleep(5)
-        self.scroll_page()
-        # Подождем, пока элементы с параметрами будут загружены
         time.sleep(5)
         items = self.driver.find_elements(By.CSS_SELECTOR, self.selectors['item'])
         time.sleep(5)
-        print(f"Найдено {len(items)} блоков")
-        # with open('page_debug.html', 'w', encoding='utf-8') as f:
-        #     f.write(self.driver.page_source)
-
+        items += self.driver.find_elements(By.CSS_SELECTOR, self.selectors['item'])
         for item in items:
-            html = item.get_attribute('innerHTML')
-            print("HTML текущего блока:\n", html)
-            print("Ищем селектор:", self.selectors['title'])
 
             result = {
                 'title': 'Название временно недоступно',
